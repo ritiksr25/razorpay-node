@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 //load Schemas
-const Order = require('./models/Order');
+// const Order = require('./models/Order');
 
 //Routes
 app.use('/', require('./routes/index'));
