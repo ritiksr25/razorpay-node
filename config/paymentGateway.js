@@ -1,26 +1,33 @@
 const razorpay = require('razorpay');
+require('dotenv').config();
 
 let rzp = new razorpay({
-    key_id: 'rzp_test_5cYHgNa8c7IUBg',
-    key_secret: 'Fmll8ETi6fVvM08E5Cn0LFd4'
+	key_id: process.env.RZP_KEY_ID,
+	key_secret: process.env.RZP_KEY_SECRET
 });
 
 module.exports.createOrder = async (amt, id) => {
-    let options = {
-    // amount in pase
-    amount: amt,
-    currency: "INR",
-    receipt: id,
-    payment_capture: '1',
-    notes: {
-        message: `Payment for order id ${id} at Angrybaaz.`
+	let options = {
+		// amount in paise
+		amount: amt * 100,
+		currency: 'INR',
+		receipt: id,
+		payment_capture: '1',
+		notes: {
+			message: `Payment for order id ${id}.`
+		}
+  }
+	try {
+    let orders = await rzp.orders.all({ receipt: id });
+    if (orders.items.length === 0) {
+        let order = await rzp.orders.create(options);
+        return order;
     }
-  };
-  try{
-    let order = await rzp.orders.create(options);
-    return order;
-  }
-  catch(err){
+    else {
+        return orders.items[0];
+    }
+}
+catch (err) {
     return err;
-  }
+}
 }
